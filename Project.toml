@@ -1,0 +1,9 @@
+name = "wfm"
+uuid = "58ebb24b-e534-440d-ad22-0ac930797880"
+authors = ["sfghuis <sfghuis@gmail.com>"]
+version = "0.1.0"
+
+[deps]
+Parameters = "d96e819e-fc66-5662-9728-84c9c7592b0a"
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+SafeTestsets = "1bc83da4-3b8d-516f-aca4-4fe02f6d838f"
