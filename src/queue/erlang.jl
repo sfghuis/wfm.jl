@@ -1,8 +1,7 @@
-module ErlangC
-
 using Parameters
+using SpecialFunctions
 
-export ErlangCData, traffic_intensity
+export *
 
 @with_kw struct ErlangCData
     arrivals::Int = 0
@@ -46,4 +45,43 @@ function traffic_intensity(data::ErlangCData)
     return (data.arrivals * data.handling_time) / data.interval
 end
 
+function probability_zero_customers(data::ErlangCData)
+    A = traffic_intensity(data)
+    c = data.num_agents
+
+    numerator = A^c / gamma(c+1)
+    denominator = sum(A^i / gamma(i+1) for i in 0:c)
+
+    return numerator / denominator
+end
+
+function probability_queued(data::ErlangCData)
+    A = traffic_intensity(data)
+    c = data.num_agents
+
+    P0 = probability_zero_customers(data)
+
+    numerator = (A^c / gamma(c+1)) * P0
+    denominator = sum(A^i / gamma(i+1) for i in 0:c-1)
+
+    return numerator / denominator
+end
+
+function average_customers(data::ErlangCData)
+    A = traffic_intensity(data)
+    c = data.num_agents
+
+    P0 = probability_zero_customers(data)
+
+    numerator = A^c * P0
+    denominator = gamma(c+1) * (c - A) * (c - 1)
+
+    return A + numerator / denominator
+end
+
+function agents_required(data::ErlangCData)
+    A = traffic_intensity(data)
+    Pq = erlang_c_probability_queued(data)
+
+    return A * (1 + Pq)
 end
